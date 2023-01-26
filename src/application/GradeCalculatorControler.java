@@ -17,6 +17,9 @@ public class GradeCalculatorControler {
 
     @FXML
     private Slider quizgradeSlider;
+    
+    @FXML
+    private Label projectErrorLabel;
 
     @FXML
     private ChoiceBox<Integer> optionCCchoicebox;
