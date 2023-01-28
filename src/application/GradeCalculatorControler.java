@@ -32,8 +32,8 @@ public class GradeCalculatorControler {
     	
     	// initializing variables for calculations later
     	double courseGrade = 0.0;
-    	double projectWeight = 0.4;
-    	double ccWeight = 0.35;
+    	double projectWeight = 0.5;
+    	double ccWeight = 0.25;
     	double quizWeight = 0.25;    	
     	
     	// getting values from text field and calculating project mass
