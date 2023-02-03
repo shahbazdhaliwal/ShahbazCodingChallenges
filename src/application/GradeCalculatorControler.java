@@ -73,6 +73,11 @@ public class GradeCalculatorControler {
     	return projectGrade;
     }
     
+    /**
+     * validates user input for choice box and returns int value of CC passed
+     * @param reqCCPassed value of required CC passed choice box
+     * @return return int value of coding challenges passed
+     */
     int getReqCC (int reqCCPassed) {
       	if (requiredCCchoicebox.getValue() == null) {
       		reqCCPassed = 0;
@@ -81,7 +86,12 @@ public class GradeCalculatorControler {
       	}
     	return reqCCPassed;
     }
-    
+
+    /**
+     * validates user input for choice box and returns int value of CC passed
+     * @param optionCCPassed value of option CC passed choice box
+     * @return return int value of optional coding challenges passed
+     */
     int getOptionCC (int optionCCPassed) {
     	if (optionCCchoicebox.getValue() == null) {
       		optionCCPassed = 0;
