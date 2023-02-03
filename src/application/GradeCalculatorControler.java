@@ -72,6 +72,24 @@ public class GradeCalculatorControler {
     	}
     	return projectGrade;
     }
+    
+    int getReqCC (int reqCCPassed) {
+      	if (requiredCCchoicebox.getValue() == null) {
+      		reqCCPassed = 0;
+      	} else {
+      		reqCCPassed = requiredCCchoicebox.getValue();
+      	}
+    	return reqCCPassed;
+    }
+    
+    int getOptionCC (int optionCCPassed) {
+    	if (optionCCchoicebox.getValue() == null) {
+      		optionCCPassed = 0;
+      	} else {
+      		optionCCPassed = optionCCchoicebox.getValue();
+      	}
+    	return optionCCPassed;
+    }
 
     /**
      * Takes user input from a Grade Calculator GUI that has a text field for project grade, 2 choice boxes for required 
@@ -90,6 +108,8 @@ public class GradeCalculatorControler {
     	double ccWeight = 0.25;
     	double quizWeight = 0.25; 
     	double projectMass = 0.0;
+    	int reqCCPassed = 0;
+    	int optionCCPassed = 0;
     	
     	//getting text from text field
     	String projectValueEntered = projectgradeTextfield.getText();
@@ -106,9 +126,7 @@ public class GradeCalculatorControler {
       	double quizMass = quizGrade * 10.0 * quizWeight;
     	
     	// getting values from choice boxes and calculating CC mass
-    	int reqCCPassed = requiredCCchoicebox.getValue();
-		int optionCCPassed = optionCCchoicebox.getValue();
-		int ccPassed = reqCCPassed + optionCCPassed;
+		int ccPassed = getReqCC(reqCCPassed) + getOptionCC(optionCCPassed);
 		double ccMass = (Double.valueOf(ccPassed)*100/20) * ccWeight;
 
 		// updating course grade
