@@ -120,12 +120,19 @@ public class GradeCalculatorControler {
     	double projectMass = 0.0;
     	int reqCCPassed = 0;
     	int optionCCPassed = 0;
+    	double projectGrade = 0.0;
     	
     	//getting text from text field
     	String projectValueEntered = projectgradeTextfield.getText();
 
     	//calling getProjectGrade function to validate user input in text field
-    	double projectGrade = getProjectGrade(projectValueEntered);
+    	if (!projectValueEntered.isEmpty()) {
+    		projectGrade = getProjectGrade(projectValueEntered);
+ 
+    	} else {
+    		projectGrade = 0.0;
+    	}
+    	
     	
    		//Calculating projectMass
    		projectMass = (projectGrade)*projectWeight;    	
