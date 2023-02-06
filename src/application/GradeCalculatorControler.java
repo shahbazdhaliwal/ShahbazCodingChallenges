@@ -1,22 +1,32 @@
 package application;
 
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class GradeCalculatorControler {
+	
+	Stage applicationStage;
+	Double averageQuizGrade = 0.0;
 
 	@FXML
 	private ChoiceBox<Integer> requiredCCchoicebox;
 
     @FXML
     private TextField projectgradeTextfield;
+    
+    @FXML 
+    private ChoiceBox<Integer> quizzesChoiceBox;
 
-    @FXML
-    private Slider quizgradeSlider;
     
     @FXML
     private Label projectGradeErrorLabel;
@@ -100,6 +110,47 @@ public class GradeCalculatorControler {
       	}
     	return optionCCPassed;
     }
+    
+    void calculateQuizGrade(Scene mainScene, ArrayList<TextField> quizGradeTextFields) {
+    	averageQuizGrade = 0.0;
+    	for (TextField textField : quizGradeTextFields) {
+    		averageQuizGrade += Double.parseDouble(textField.getText());        		
+    	}
+    	averageQuizGrade = averageQuizGrade / quizGradeTextFields.size();
+    	applicationStage.setScene(mainScene);
+    }
+    
+    @FXML
+    void getQuizGrades(ActionEvent enterQuizGradesEvent) {
+    	
+    	Scene mainScene = applicationStage.getScene();
+    	
+    	int numberofQuizzes = quizzesChoiceBox.getValue();
+    	int rowCounter = 0;
+    	VBox allRows = new VBox();
+    	ArrayList<TextField> quizGradeTextFields = new ArrayList<TextField>();
+    	while (rowCounter < numberofQuizzes) {
+    		rowCounter ++;
+    		
+    		HBox quizRow = new HBox();
+        	Label quizLabel = new Label("Quiz " + rowCounter + " grade");
+        	TextField quizGradeTextField = new TextField();
+        	quizGradeTextFields.add(quizGradeTextField);
+        	
+        	quizRow.getChildren().addAll(quizLabel, quizGradeTextField);
+      
+        	
+        	allRows.getChildren().add(quizRow);
+        		
+    	}
+    	
+    	Button doneButton = new Button("Done");
+    	doneButton.setOnAction(doneEvent -> calculateQuizGrade(mainScene, quizGradeTextFields));
+    	allRows.getChildren().add(doneButton);
+    	
+    	Scene quizScene = new Scene(allRows);
+    	applicationStage.setScene(quizScene);
+    }
 
     /**
      * Takes user input from a Grade Calculator GUI that has a text field for project grade, 2 choice boxes for required 
@@ -139,8 +190,8 @@ public class GradeCalculatorControler {
 
     	
     	// getting values from slider and calculating quiz mass
-    	double quizGrade = quizgradeSlider.getValue();    
-      	double quizMass = quizGrade * 10.0 * quizWeight;
+    	double quizGrade = averageQuizGrade;    
+      	double quizMass = quizGrade * quizWeight;
     	
     	// getting values from choice boxes and calculating CC mass
 		int ccPassed = getReqCC(reqCCPassed) + getOptionCC(optionCCPassed);
