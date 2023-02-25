@@ -2,6 +2,7 @@ package application;
 
 import java.util.ArrayList;
 
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -18,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 
 public class GradeCalculatorControler {
@@ -67,99 +69,10 @@ public class GradeCalculatorControler {
     
     @FXML
     private Button optionQuizButton;
-    
-    /**
-     * Checks if the value provided in a text field is a valid value for a project grade. For it to pass through this function,
-     * the value must be a string type number from 0 to 100 without any other special characters. Valid values are returned as 
-     * an equivalent double types, while invalid values return a double of 0.0.  
-     * @param valueEntered string value entered as the project grade
-     * @return returns a double of valueEntered if its a number between 0 and 100, otherwise it will return the double 0.0
-     * along with error messages in the Grade Calculator GUI
-     */
-    double getProjectGrade(String valueEntered) {
-    
-    	//initializing some variables
-    	boolean validProjectGrade = true;
-    	double projectGrade = 0.0;
-    	int decimalCount = 0;
-    	
-    	// making sure string value can be converted into a double
-    	for (char c : valueEntered.toCharArray()) {
-    		//makes sure incorrect characters aren't in project grade
-    		if (!Character.isDigit(c) && c != '.') {
-    			validProjectGrade = false;
-    			projectGradeErrorLabel.setText("Project Grade should be percentage. "+"Don't include the character: "
-    			+c);
-    			projectGrade = 0;
-    		// makes sure too many decimals aren't allowed through
-    		} else if (c == '.') {
-    			decimalCount += 1;
-    			if (decimalCount >= 2) {
-    				validProjectGrade = false;
-    				projectGradeErrorLabel.setText("There are too many decimals in: "+valueEntered+". Enter valid number");
-    				projectGrade = 0;    				
-    			}
-    		
-    		}
-    	}
-    	//Converting valid project grade into a double and later checking its between 0 and 100
-     	if (validProjectGrade) {
-    		projectGrade = Double.parseDouble(valueEntered);
-       	}
-    	if (projectGrade < 0 || projectGrade > 100) {
-    		projectGradeErrorLabel.setText("Invalid Project Grade Entered: " + projectGrade +
-    				". Enter value from 0 to 100");
-    		projectGrade = 0;
-    	}
-    	return projectGrade;
-    }
-    
-    /**
-     * Checks if the value provided in a text field is a valid value for a quiz. For it to pass through this function,
-     * the value must be a string type number from 0 to 100 without any other special characters. Valid values are returned as 
-     * an equivalent double types, while invalid values return a double of 0.0.  
-     * @param valueEntered string value entered as the quiz grade
-     * @return returns a double of valueEntered if its a number between 0 and 100, otherwise it will return the double 0.0
-     */
-    double getQuizGrade(String valueEntered) {
-    	//initializing some variables
-    	boolean validQuizGrade = true;
-    	double quizGrade = 0.0;
-    	int decimalCount = 0;
-    	
-    	// making sure string value can be converted into a double
-    	for (char c : valueEntered.toCharArray()) {
-    		//makes sure incorrect characters aren't in quiz grade
-    		if (!Character.isDigit(c) && c != '.') {
-    			validQuizGrade = false;
-    			quizGrade = 0;
-    			quizErrorFlag = 1;
-    		// makes sure too many decimals aren't allowed through
-    		} else if (c == '.') {
-    			decimalCount += 1;
-    			if (decimalCount >= 2) {
-    				validQuizGrade = false;
-    				quizGrade = 0;
-    				quizErrorFlag = 1;
-    			}
-    		
-    		}
-    	}
-    	//Converting valid quiz grade into a double and later checking its between 0 and 100
-     	if (validQuizGrade) {
-    		quizGrade = Double.parseDouble(valueEntered);
-       	}
-    	if (quizGrade < 0 || quizGrade > 10) {
-    		quizGrade = 0;
-    		quizErrorFlag = 1;
-    	}
-    	return quizGrade;
-    }
-    
     /**
      * validates user input for choice box and returns int value of CC passed
      * @param reqCCPassed value of required CC passed choice box
-     * @return return int value of coding challenges passed
+     * @return return value of coding challenges passed
      */
     int getReqCC (int reqCCPassed) {
       	if (requiredCCchoicebox.getValue() == null) {
@@ -173,7 +86,7 @@ public class GradeCalculatorControler {
     /**
      * validates user input for choice box and returns int value of CC passed
      * @param optionCCPassed value of option CC passed choice box
-     * @return return int value of optional coding challenges passed
+     * @return return value of optional coding challenges passed
      */
     int getOptionCC (int optionCCPassed) {
     	if (optionCCchoicebox.getValue() == null) {
@@ -185,131 +98,55 @@ public class GradeCalculatorControler {
     }
     
     /**
-     * Finds the largest 5 numbers in a array with more than 5 elements
-     * @param tempDoubleList Double[] array
-     * @return Double[] array
+     * resets the quiz grade error label to ""
      */
-    Double[] findTopFive(Double[] tempDoubleList) {
-    	Double[] newList;
-        if (tempDoubleList.length > 5.0) {
-        	//sorts numbers greatest to smallest
-        	//found how to do this using: https://www.geeksforgeeks.org/arrays-sort-in-java-with-examples/
-        	Arrays.sort(tempDoubleList, Collections.reverseOrder());
-        	newList = new Double[5];
-        	int counter = 0;
-        	for (Double i : tempDoubleList) {
-        		while (counter < 5) {
-        			newList[counter] = i;
-        			counter ++;
-        		}
-        	}       
-        } else {
-        	newList = tempDoubleList;
-        }
-    	return newList;
+    void removeError() {
+    	quizErrorLabel.setText("");
     }
     
     /**
-     * Makes all values inside a Double[] list equal to 0
-     * @param list input list
-     * @return output list
+     * sets quizErrorLabel to display why error was encountered
+     * @param quizzes instance of Grade class where quizzes were initialized
      */
-    Double[] resetList (Double[] list) {
-    	int i = (int) (list.length);
-    	int read = 0;
-    	while (read < i) {
-    		list[read] = 0.0;
-    		read++;
-    	}
-    	return list;
+    void setError(Grade quizzes) {
+    	quizErrorLabel.setText("Error in one or more quiz text fields. Error caused by: "+quizzes.quizErrorValue);
     }
-    
+       
     /**
      * gets values from quiz grade text fields and appends them onto a double[] list. TextField Strings are verified
-     * by get quiz grade
+     * by Grade class
      * @param mainScene main scene of GUI
-     * @param quizGradeTextFields ArrayList<TextField> type that is an array of all the different text fields
+     * @param quizGradeTextFields that is an array of all the different text fields
      * @param typeOfQuiz variable that dictates whether to read optional quiz grades or required
      */
     void calculateQuizGrade(Scene mainScene, ArrayList<TextField> quizGradeTextFields, int typeOfQuiz) {
-    	
-    	String rawQuizGrade;
     	int quizCheck = 1;
     	//case for if user wants to enter option quiz grades
     	if (typeOfQuiz == quizCheck) {
-    		
-    		quizOptionList = resetList(quizOptionList);
-    		//makes identical list of different type to be able to add numbers to the list
-    		//Learned how to use this array list from: https://www.javatpoint.com/add-elements-to-array-in-java
-    		ArrayList<Double> averageOptionQuizGrade = new ArrayList<Double>(Arrays.asList(quizOptionList));
-    		
-    		//temporary list in order to find top five marks
-    		Double[] tempDoubleList = {0.0};
-    		ArrayList<Double> tempList = new ArrayList<Double>(Arrays.asList(tempDoubleList));
-    		
-    		//looks through text fields	and adds quiz grades to a list
-    		for (TextField textField : quizGradeTextFields) {
-    			if (!textField.getText().isEmpty()) {
-    				rawQuizGrade = textField.getText();
-        			tempList.add(getQuizGrade(rawQuizGrade));
-        		
-    			} else {
-    				tempList.add(0.0);
-    			}
+    		Grade optionQuizzes = new Grade();
+    		quizOptionList = optionQuizzes.resetList(quizOptionList);
+    		quizOptionList = optionQuizzes.fromTextFieldsToArray
+    				(quizOptionList, quizGradeTextFields, 10.0).toArray(quizOptionList);
+    		Grade findTopFive = new Grade();
+    		quizOptionList = findTopFive.findTopFive(quizOptionList);
+    		optionalGradeLabel.setText(String.format("%.2f", optionQuizzes.findListAverage(quizOptionList, 5)) + "%" );
+    		if (optionQuizzes.error == true) {
+    			setError(optionQuizzes);
+    		} else {
+    			removeError();
     		}
-    		//converting back to Double[]
-    		tempDoubleList = tempList.toArray(tempDoubleList);
-    		//finding top five grades
-    		Double[] newList = findTopFive(tempDoubleList);
-    		Double optionQuizAverage = 0.0;
-    		//adding grades to a list that gets used in grade calculation 
-    		for (Double i : newList) {
-    			averageOptionQuizGrade.add(i);
-    			optionQuizAverage += i;
+    	} else {
+    		Grade requiredQuizzes = new Grade();
+    		quizGradeList = requiredQuizzes.resetList(quizGradeList);
+    		quizGradeList = requiredQuizzes.fromTextFieldsToArray
+    				(quizGradeList, quizGradeTextFields, 10.0).toArray(quizGradeList);
+    		requiredGradeLabel.setText(String.format("%.2f", requiredQuizzes.findListAverage(quizGradeList, 15.0)) + "%" );
+    		if (requiredQuizzes.error == true) {
+    			setError(requiredQuizzes);
+    		} else {
+    			removeError();
     		}
-    		//finding quiz average to update label
-    		optionQuizAverage /= 5;
-    		optionQuizAverage *= 10;
-    		quizOptionList = averageOptionQuizGrade.toArray(quizOptionList);
-    		optionalGradeLabel.setText(String.format("%.2f", optionQuizAverage) + "%");
-    		
-    		
-    	} else {
-    		//case for user entering required quizzes
-    		Double requiredQuizAverage = 0.0;
-    		quizGradeList = resetList(quizGradeList);
-    		ArrayList<Double> averageQuizGrade = new ArrayList<Double>(Arrays.asList(quizGradeList));
-    		
-    		//looking through text field and adding numbers to a list
-    		for (TextField textField : quizGradeTextFields) {
-    		    
-    			if (!textField.getText().isEmpty()) {
-    				rawQuizGrade = textField.getText();
-            		//adds double to averageQuizGrade after verifying string can be converted to a double
-            		averageQuizGrade.add(getQuizGrade(rawQuizGrade));
-            		requiredQuizAverage += getQuizGrade(rawQuizGrade);
-    			} else {
-    				averageQuizGrade.add(0.0);
-    				requiredQuizAverage += 0;
-    			}
-        	}
-    		//update grade label
-    		requiredQuizAverage /= 15;
-    		requiredQuizAverage *= 10;
-    		requiredGradeLabel.setText(String.format("%.2f", requiredQuizAverage) + "%" );
-            quizGradeList = averageQuizGrade.toArray(quizGradeList);
-    	}
-    	
-    	//condition that lets the user know when they've input an invalid grade
-    	if (quizErrorFlag == 1) {
-    		quizErrorLabel.setText("1 or more incorrect values entered");
-    		quizErrorFlag = 0;
-    	} else {
-    		quizErrorLabel.setText("");
-    	}
-    	
-    	
-    	
+    	}  	
     	applicationStage.setScene(mainScene);
     	return;
     }
@@ -329,6 +166,7 @@ public class GradeCalculatorControler {
     	//learned from https://edencoding.com/check-whats-been-clicked/#:~:text=When%20a%20button%20is%20clicked,when%20the%20button%20was%20created.
         EventTarget quizType = enterQuizGradesEvent.getTarget();
         String strQuizType = quizType.toString();
+
         
         //finds which "Enter Quiz Grades" button was pressed and obtains the number of quizzes the user wants to enter
         if (strQuizType.contains("reqQuizButton")) {
@@ -347,58 +185,22 @@ public class GradeCalculatorControler {
         	}
         }
         
-        //making rows given the number of quizzes 
-    	int rowCounter = 0;
-    	VBox allRows = new VBox();
-    	allRows.setAlignment(Pos.TOP_CENTER);
-    	
-    	ArrayList<TextField> quizGradeTextFields = new ArrayList<TextField>();
-    	while (rowCounter < numberofQuizzes) {
-    		rowCounter ++;
-    		
-    		HBox quizRow = new HBox();
-    		quizRow.setPrefHeight(30.0);
-    		quizRow.setAlignment(Pos.CENTER);
-    		
-        	Label quizLabel = new Label("Quiz " + rowCounter + " grade");
-        	quizLabel.setAlignment(Pos.CENTER_LEFT);
-        	Insets quizRowInsets = new Insets(5);
-        	HBox.setMargin(quizLabel, quizRowInsets);
-        	
-        	
-        	TextField quizGradeTextField = new TextField();
-        	quizGradeTextField.setAlignment(Pos.CENTER_RIGHT);
-        	quizGradeTextField.setPrefWidth(50.0);
-        	quizGradeTextFields.add(quizGradeTextField);
-        	
-        	quizRow.getChildren().addAll(quizLabel, quizGradeTextField);
-            
-        	
-        	allRows.getChildren().add(quizRow);
-        	
-        		
-    	}
-    	
+        SceneEditor makeRows = new SceneEditor();
+        VBox vBox = makeRows.makeRows(numberofQuizzes);
+        
     	//makes sure choice box values are valid in order to make a new window and configures the done button
     	if ((reqQuizzesChoiceBox.getValue() != null && numberofQuizzes == reqQuizzesChoiceBox.getValue()) 
     			|| (quizzesChoiceBox.getValue() != null && numberofQuizzes == quizzesChoiceBox.getValue())) {
     		
-    		HBox buttonRow = new HBox();
+    		SceneEditor newButton = new SceneEditor();
+    		HBox buttonRow = newButton.makeButton();
+    		ArrayList<TextField> quizGradeTextFields = makeRows.quizGradeTextFields;
     		
-    		buttonRow.setPrefWidth(150.0);
-    		buttonRow.setPrefHeight(20.0);
-    		buttonRow.setAlignment(Pos.CENTER);
-    		
-    		Button doneButton = new Button("Done");
-    		doneButton.setAlignment(Pos.TOP_CENTER);
-    		
-    		buttonRow.getChildren().addAll(doneButton);
-    		
-    		doneButton.setOnAction(doneEvent -> calculateQuizGrade(mainScene, quizGradeTextFields, typeOfQuiz));
+    		newButton.doneButton.setOnAction(doneEvent -> calculateQuizGrade(mainScene, quizGradeTextFields, typeOfQuiz));
 			
-        	allRows.getChildren().add(buttonRow);
+        	vBox.getChildren().add(buttonRow);
         	
-        	Scene quizScene = new Scene(allRows);
+        	Scene quizScene = new Scene(vBox);
         	applicationStage.setScene(quizScene);
         	
         	//Scene title
@@ -410,28 +212,12 @@ public class GradeCalculatorControler {
         	}
         	
     	} 
-    	}
-    
-    /**
-     * reads through list of quiz grades and find their average
-     * @return return average quiz grade as a Double
-     */
-    Double avgQuizGrade() {
-    	Double sumQuizGrade = 0.0;
-    	for (Double i : quizGradeList) {
-    		sumQuizGrade += i;
-    	}
-    	for (Double j : quizOptionList) {
-    		sumQuizGrade += j;
-    		
-    	}
-    	Double averageQuizGrade = sumQuizGrade * 10 / 20;
-    	return averageQuizGrade;
     }
+    
 
     /**
      * Takes user input from a Grade Calculator GUI that has a text field for project grade, 2 choice boxes for required 
-     * and optional coding challenges completed and a slider to indicate average quiz grade. From user input data, the user's
+     * and optional coding challenges completed and a 2 choice boxes to indicate average quiz grade. From user input data, the user's
      * course grade is calculated. 
      * @param event the button "Calculate Grade" must be clicked on when in the grade calculator GUI for this method to work
      */
@@ -443,39 +229,45 @@ public class GradeCalculatorControler {
     	// initializing variables for calculations and other uses later
     	double courseGrade = 0.0;
     	double projectWeight = 0.5;
-    	double ccWeight = 0.25;
+    	double ccWeight = 0.25*100/20;
     	double quizWeight = 0.25; 
-    	double projectMass = 0.0;
     	int reqCCPassed = 0;
     	int optionCCPassed = 0;
-    	double projectGrade = 0.0;
     	
     	//getting text from text field
     	String projectValueEntered = projectgradeTextfield.getText();
+    	
+    	Grade projectCalc;
+    	double projectGradeNoWeight;
 
-    	//calling getProjectGrade function to validate user input in text field
+    	//using grade class to validate user input in text field
     	if (!projectValueEntered.isEmpty()) {
-    		projectGrade = getProjectGrade(projectValueEntered);
- 
+    		projectCalc = new Grade();
+    		projectGradeNoWeight = projectCalc.setValue(projectValueEntered, 100.0);
+    		if (projectCalc.error == true) {
+    			projectGradeErrorLabel.setText("Don't include the following character in the project grade: " + projectCalc.errorValue);
+    		}
     	} else {
-    		projectGrade = 0.0;
+    		projectCalc = new Grade();
+    		projectGradeNoWeight = projectCalc.setValue("0.0", 100.0);
+    		projectGradeErrorLabel.setText("Project Grade Text Field is Empty");
     	}
-    	
-    	
-   		//Calculating projectMass
-   		projectMass = (projectGrade)*projectWeight;    	
 
     	
     	//calculating quiz mass
-    	double quizGrade = avgQuizGrade();
-      	double quizMass = quizGrade * quizWeight;
+    	Grade calculateQuizzes = new Grade();
+    	double quizGrade = calculateQuizzes.avgList(quizGradeList, quizOptionList, 20.0);
+      	double quizMass = calculateQuizzes.doCalculation(quizGrade, quizWeight);
     	
     	// getting values from choice boxes and calculating CC mass
 		int ccPassed = getReqCC(reqCCPassed) + getOptionCC(optionCCPassed);
-		double ccMass = (Double.valueOf(ccPassed)*100/20) * ccWeight;
-
+		Grade ccCalc = new Grade();
+		double ccGrade = ccCalc.doCalculation(ccPassed, ccWeight);
+		
+		double projectGrade = projectCalc.doCalculation(projectGradeNoWeight, projectWeight);
+		
 		// updating course grade
-		courseGrade = courseGrade + projectMass + quizMass + ccMass; 
+		courseGrade = courseGrade + projectGrade + quizMass + ccGrade; 
  		
 		/* console prints used while debugging
     	System.out.println("Project Grade Entered " + projectGrade);
