@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 
 public class Grade {
 	
+	
+	
 	// contains the first character encountered that is not valid
 	String errorValue = "";
 	//turns true when error encountered during validation
