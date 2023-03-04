@@ -7,7 +7,7 @@ import java.util.Date;
  * @author Shahbaz
  *
  */
-public class Flight {
+public class TripComponent {
 	
 	//initializing instance variables
 	private Date departure;
@@ -18,7 +18,7 @@ public class Flight {
 	 * @param departureDate departure date
 	 * @param arrivalDate arrival date
 	 */
-	Flight (Date departureDate, Date arrivalDate) {
+	TripComponent (Date departureDate, Date arrivalDate) {
 		if ((departureDate != null && arrivalDate != null) && 
 				departureDate.before(arrivalDate)) {
 			setDeparture(departureDate);
@@ -34,7 +34,7 @@ public class Flight {
 	 * constructor for making copy of some give flight
 	 * @param toCopy flight you want to copy
 	 */
-	Flight(Flight toCopy){
+	TripComponent(TripComponent toCopy){
 		setDeparture(toCopy.getDeparture());
 		setArrival(toCopy.getArrival());
 	}
