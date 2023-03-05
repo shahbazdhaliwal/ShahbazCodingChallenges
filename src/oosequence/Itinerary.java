@@ -31,16 +31,16 @@ public class Itinerary {
 	 * @param flightToAdd flight you want to add to the itinerary
 	 */
 	void addFlight(Flight flightToAdd) {
-		Date newDeparture = flightToAdd.getDeparture();
-		Date newArrival = flightToAdd.getArrival();
+		Date newDeparture = flightToAdd.getStart();
+		Date newArrival = flightToAdd.getEnd();
 		boolean overlapFlag = false;
 		
 		//checks for overlap
 		for (Flight existingFlight : flights) {
 			//if statement for all cases where there could be overlap
-			if (existingFlight.getDeparture().after(newDeparture) && existingFlight.getDeparture().before(newArrival) ||
-					existingFlight.getArrival().after(newDeparture) && existingFlight.getArrival().before(newArrival) ||
-					existingFlight.getDeparture().equals(newDeparture) || existingFlight.getArrival().equals(newArrival)) {
+			if (existingFlight.getStart().after(newDeparture) && existingFlight.getStart().before(newArrival) ||
+					existingFlight.getEnd().after(newDeparture) && existingFlight.getEnd().before(newArrival) ||
+					existingFlight.getStart().equals(newDeparture) || existingFlight.getEnd().equals(newArrival)) {
 				overlapFlag = true;
 			}
 		}
@@ -48,13 +48,13 @@ public class Itinerary {
 		//sorting list and adding new flight
 		if (overlapFlag == false) {
 			//case for if list is empty of if new departure after last current arrival time
-			if ( flights.size() == 0 || newDeparture.after(flights.get(flights.size() - 1).getArrival()) ) {
+			if ( flights.size() == 0 || newDeparture.after(flights.get(flights.size() - 1).getEnd()) ) {
 				flights.add(flightToAdd);
 			} else {
 				for (int i = 0; i < flights.size(); i ++) {
 					//checks if new arrival is before current flights departure and puts new flight in front of current flight if 
 					// 	    thats the case
-					if (newArrival.before(flights.get(i).getDeparture())) {
+					if (newArrival.before(flights.get(i).getStart())) {
 						flights.add(i, flightToAdd);
 						break;
 					}
@@ -74,8 +74,8 @@ public class Itinerary {
 				//adds the difference between arrival and next departure for every element in list 
 				Flight nextFlight = flights.get(counter + 1);
 				Flight currentFlight = flights.get(counter);
-				layover += ((nextFlight.getDeparture().getTime() 
-						- currentFlight.getArrival().getTime()) / 60000);
+				layover += ((nextFlight.getStart().getTime() 
+						- currentFlight.getEnd().getTime()) / 60000);
 			}	
 		}
 		return layover;

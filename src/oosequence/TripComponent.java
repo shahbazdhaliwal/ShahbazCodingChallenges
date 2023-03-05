@@ -3,51 +3,76 @@ package oosequence;
 import java.util.Date;
 
 /**
- * Represents a flight
+ * Handles trips, takes start and end times and also returns durations of trip
  * @author Shahbaz
  *
  */
 public class TripComponent {
 	
 	//initializing instance variables
-	private Date departure;
-	private Date arrival;
+	private Date start;
+	private Date end;
+	
+	/**
+	 * sets start to current date and end to an hour later
+	 */
+	TripComponent() {
+		long millisInHour = 3600000;
+		Date currentTime = new Date();
+		long hourAdded = currentTime.getTime() + millisInHour;
+		Date endTime = new Date(hourAdded);
+		
+		setStart(currentTime);
+		setEnd(endTime);
+		
+	}
 	
 	/**
 	 * constructor that defines instance variables
-	 * @param departureDate departure date
-	 * @param arrivalDate arrival date
+	 * @param startDate start date
+	 * @param endDate end date
 	 */
-	TripComponent (Date departureDate, Date arrivalDate) {
-		if ((departureDate != null && arrivalDate != null) && 
-				departureDate.before(arrivalDate)) {
-			setDeparture(departureDate);
-			setArrival(arrivalDate);
-		} else if (departureDate != null && arrivalDate == null) {
-			setDeparture(departureDate);
-		} else if (arrivalDate != null && departureDate == null) {
-			setArrival(arrivalDate);
+	TripComponent (Date startDate, Date endDate) {
+		
+		if (startDate != null && endDate == null) {
+			setStart(startDate);
+			
+		} else if (endDate != null && startDate == null) {
+			setEnd(endDate);
+			
+		} else if (startDate == null && endDate == null) {
+			setStart(startDate);
+			setEnd(endDate);
+			
+		} else if (startDate.before(endDate)) {
+			setStart(startDate);
+			setEnd(endDate);	
+			
+		} else if (startDate.equals(endDate) || startDate.after(endDate)) {
+			setStart(startDate);
+			
 		}
 	}
 	
 	/**
-	 * constructor for making copy of some give flight
-	 * @param toCopy flight you want to copy
+	 * constructor for making copy of some given trip
+	 * @param toCopy trip you want to copy
 	 */
 	TripComponent(TripComponent toCopy){
-		setDeparture(toCopy.getDeparture());
-		setArrival(toCopy.getArrival());
+		setStart(toCopy.getStart());
+		setEnd(toCopy.getEnd());
 	}
 	
 	/**
-	 * returns the length of the flight
+	 * returns the length of the trip
 	 * @return length
 	 */
-	long length() {
-		if ((getDeparture() != null && getArrival() != null) && 
-				getDeparture().before(getArrival())) {
-			//find the difference between arrival and departure
-			long time = (getArrival().getTime() - getDeparture().getTime()) / 60000;  
+	long lengthInSeconds() {
+		if ((getStart() != null && getEnd() != null) && 
+				getStart().before(getEnd())) {
+			//find the difference between end and start
+			long millisToSecs = 1000;
+			long time = (getEnd().getTime() - getStart().getTime()) / millisToSecs;  
 			return time;
 		} else {
 			return (long) 0.0;
@@ -55,42 +80,42 @@ public class TripComponent {
 	}
 	
 	/**
-	 * returns departure time
-	 * @return departure time
+	 * returns start time
+	 * @return start time
 	 */
-	Date getDeparture() {
-		return departure;
+	Date getStart() {
+		return start;
 	}
 	
 	/**
-	 * sets the departure of the flight granted the time of departure is valid
-	 * @param departure departure
+	 * sets the start of the trip granted the time of start is valid
+	 * @param startDate start
 	 */
-	void setDeparture(Date departure) {
-		if (this.arrival != null && departure.before(this.arrival)) {
-			this.departure = departure;
-		} else if (this.arrival == null) {
-			this.departure = departure;
+	void setStart(Date startDate) {
+		if (this.end != null && startDate.before(this.end)) {
+			this.start = startDate;
+		} else if (this.end == null) {
+			this.start = startDate;
 		}
 	}
 	
 	/**
-	 * returns the arrival time
-	 * @return arrival time
+	 * returns the end time
+	 * @return end time
 	 */
-	Date getArrival() {
-		return arrival;
+	Date getEnd() {
+		return end;
 	}
 
 	/**
-	 * sets the arrival time of a flight given its a valid time
-	 * @param arrival arrival time
+	 * sets the end time of a trip given its a valid time
+	 * @param endDate end time
 	 */
-	void setArrival(Date arrival) {
-		if (this.departure != null && arrival.after(this.departure)) {
-			this.arrival = arrival;
-		} else if (this.departure == null) {
-			this.arrival = arrival;
+	void setEnd(Date endDate) {
+		if (this.start != null && endDate.after(this.start)) {
+			this.end = endDate;
+		} else if (this.start == null) {
+			this.end = endDate;
 		}
 	}
 	

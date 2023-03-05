@@ -5,5 +5,5 @@ module GradeCalculator {
 	requires javafx.base;
 	requires junit;
 	
-	opens application to javafx.graphics, javafx.fxml;
+	//opens application to javafx.graphics, javafx.fxml;
 }
