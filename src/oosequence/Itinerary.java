@@ -13,7 +13,7 @@ public class Itinerary {
 	
 	
 	//Initializing instance variables
-	private ArrayList<Flight> flights;
+	private ArrayList<TripComponent> tripComponents;
 	private String name;
 	
 	/**
@@ -22,21 +22,21 @@ public class Itinerary {
 	 */
 	Itinerary (String nameOfItinerary) {
 		name = nameOfItinerary;
-		flights = new ArrayList<Flight>();
+		tripComponents = new ArrayList<TripComponent>();
 		
 	}
 		
 	/**
 	 * adds a flight to the itinerary after checking for flight overlap and sorting the itinerary list with first departure first
-	 * @param flightToAdd flight you want to add to the itinerary
+	 * @param component flight you want to add to the itinerary
 	 */
-	void addFlight(Flight flightToAdd) {
-		Date newDeparture = flightToAdd.getStart();
-		Date newArrival = flightToAdd.getEnd();
+	void addTripComponent(TripComponent component) {
+		Date newDeparture = component.getStart();
+		Date newArrival = component.getEnd();
 		boolean overlapFlag = false;
 		
 		//checks for overlap
-		for (Flight existingFlight : flights) {
+		for (TripComponent existingFlight : tripComponents) {
 			//if statement for all cases where there could be overlap
 			if (existingFlight.getStart().after(newDeparture) && existingFlight.getStart().before(newArrival) ||
 					existingFlight.getEnd().after(newDeparture) && existingFlight.getEnd().before(newArrival) ||
@@ -48,45 +48,47 @@ public class Itinerary {
 		//sorting list and adding new flight
 		if (overlapFlag == false) {
 			//case for if list is empty of if new departure after last current arrival time
-			if ( flights.size() == 0 || newDeparture.after(flights.get(flights.size() - 1).getEnd()) ) {
-				flights.add(flightToAdd);
+			if ( tripComponents.size() == 0 || newDeparture.after(tripComponents.get(tripComponents.size() - 1).getEnd()) ) {
+				tripComponents.add(component);
 			} else {
-				for (int i = 0; i < flights.size(); i ++) {
+				for (int i = 0; i < tripComponents.size(); i ++) {
 					//checks if new arrival is before current flights departure and puts new flight in front of current flight if 
 					// 	    thats the case
-					if (newArrival.before(flights.get(i).getStart())) {
-						flights.add(i, flightToAdd);
+					if (newArrival.before(tripComponents.get(i).getStart())) {
+						tripComponents.add(i, component);
 						break;
 					}
 				}
 			}
 		}
 	}
+	/*
 	
 	/**
 	 * finds the total time a person will spend in between flights
 	 * @return layover
-	 */
+	 /
 	long getTotalLayover() {
 		long layover = 0L;
-		if (flights.size() > 1) {
-			for (int counter = 0; counter < flights.size() - 1; counter ++) {
+		if (tripComponents.size() > 1) {
+			for (int counter = 0; counter < tripComponents.size() - 1; counter ++) {
 				//adds the difference between arrival and next departure for every element in list 
-				Flight nextFlight = flights.get(counter + 1);
-				Flight currentFlight = flights.get(counter);
+				TripComponent nextFlight = tripComponents.get(counter + 1);
+				TripComponent currentFlight = tripComponents.get(counter);
 				layover += ((nextFlight.getStart().getTime() 
 						- currentFlight.getEnd().getTime()) / 60000);
 			}	
 		}
 		return layover;
 	}
+	*/
 
 	/**
 	 * gives the list of flights 
 	 * @return flights
 	 */
-	ArrayList<Flight> getFlights() {
-		return flights;
+	ArrayList<TripComponent> getTripComponents() {
+		return tripComponents;
 	}
 	
 	/**
