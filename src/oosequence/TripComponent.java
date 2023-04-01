@@ -12,28 +12,14 @@ public class TripComponent extends Itinerary{
 	//initializing instance variables
 	private Date start;
 	private Date end;
-	/*
-	/**
-	 * sets start to current date and end to an hour later
-	 /
-	TripComponent() {
-		long millisInHour = 3600000;
-		Date currentTime = new Date();
-		long hourAdded = currentTime.getTime() + millisInHour;
-		Date endTime = new Date(hourAdded);
-		
-		setStart(currentTime);
-		setEnd(endTime);
-		
-	}
-	*/
+	
 	/**
 	 * constructor that defines instance variables
 	 * @param startDate start date
 	 * @param endDate end date
 	 */
 	TripComponent (Date startDate, Date endDate) {
-		super(null);
+		super("");
 		if (startDate != null && endDate == null) {
 			setStart(startDate);
 			
@@ -59,9 +45,9 @@ public class TripComponent extends Itinerary{
 	 * @param toCopy trip you want to copy
 	 */
 	TripComponent(TripComponent toCopy){
-		super(null);
-		setStart(toCopy.getStart());
-		setEnd(toCopy.getEnd());
+		super("");
+		setStart(toCopy.start);
+		setEnd(toCopy.end);
 	}
 	
 	/**
@@ -69,11 +55,11 @@ public class TripComponent extends Itinerary{
 	 * @return length
 	 */
 	protected long lengthInSeconds() {
-		if ((getStart() != null && getEnd() != null) && 
-				getStart().before(getEnd())) {
+		if ((start != null && end != null) && 
+				start.before(end)) {
 			//find the difference between end and start
 			long millisToSecs = 1000;
-			long time = (getEnd().getTime() - getStart().getTime()) / millisToSecs;  
+			long time = (end.getTime() - start.getTime()) / millisToSecs;  
 			return time;
 		} else {
 			return (long) 0.0;
@@ -81,11 +67,15 @@ public class TripComponent extends Itinerary{
 	}
 	
 	/**
-	 * returns start time
+	 * returns start time, if start time is null it returns empty string
 	 * @return start time
 	 */
 	String getStart() {
-		return "";
+		if (start != null) {
+			return start.toString();
+		} else {
+			return "";
+		}
 	}
 	
 	/**
@@ -93,19 +83,23 @@ public class TripComponent extends Itinerary{
 	 * @param startDate start
 	 */
 	void setStart(Date startDate) {
-		if (this.end != null && startDate.before(this.end)) {
-			this.start = startDate;
-		} else if (this.end == null) {
-			this.start = startDate;
+		if (end != null && startDate.before(end)) {
+			start = startDate;
+		} else if (end == null) {
+			start = startDate;
 		}
 	}
 	
 	/**
-	 * returns the end time
+	 * returns the end time, if end is null then empty string returned
 	 * @return end time
 	 */
 	String getEnd() {
-		return "";
+		if (end != null) {
+			return end.toString();
+		} else {
+			return "";
+		}
 	}
 
 	/**
@@ -113,19 +107,45 @@ public class TripComponent extends Itinerary{
 	 * @param endDate end time
 	 */
 	void setEnd(Date endDate) {
-		if (this.start != null && endDate.after(this.start)) {
-			this.end = endDate;
-		} else if (this.start == null) {
-			this.end = endDate;
+		if (start != null && endDate.after(start)) {
+			end = endDate;
+		} else if (start == null) {
+			end = endDate;
 		}
 	}
 	
+	/**
+	 * Checks to see if the end time of one trip is before the start time of another trip
+	 * @param otherComponent other trip to compare to
+	 * @return true if end before another trip start
+	 */
 	public boolean isBefore(TripComponent otherComponent) {
-		return true;
+		if (end.before(otherComponent.start)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 	
-	public boolean overlapsWith(TripComponent otherComponent) {
-		return true;
+	/**
+	 * checks for overlap between two trips
+	 * @param otherComponent other trip
+	 * @return true if there is overlap
+	 */
+	public boolean overlapsWith(TripComponent otherComponent) { 
+		//case for when overlap check isn't necessary
+		if (start == null || end == null || otherComponent.start == null || otherComponent.end == null ) {
+			return false;
+		//checking cases of possible overlap
+		} else if (start.after(otherComponent.start) && start.before(otherComponent.end)) {
+			return true;
+		} else if (otherComponent.start.after(start) && otherComponent.start.before(end)) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 	
 

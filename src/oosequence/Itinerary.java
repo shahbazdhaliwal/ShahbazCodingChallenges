@@ -31,58 +31,34 @@ public class Itinerary {
 	 * @param component flight you want to add to the itinerary
 	 */
 	void addTripComponent(TripComponent component) {
-		Date newDeparture = component.getStart();
-		Date newArrival = component.getEnd();
-		boolean overlapFlag = false;
-		
-		//checks for overlap
-		for (TripComponent existingFlight : tripComponents) {
-			//if statement for all cases where there could be overlap
-			if (existingFlight.getStart().after(newDeparture) && existingFlight.getStart().before(newArrival) ||
-					existingFlight.getEnd().after(newDeparture) && existingFlight.getEnd().before(newArrival) ||
-					existingFlight.getStart().equals(newDeparture) || existingFlight.getEnd().equals(newArrival)) {
-				overlapFlag = true;
-			}
+		boolean flag = false;
+		//checks for any overlap with existing trips. 
+		//if overlap flag raised
+		for (TripComponent i : tripComponents) {
+			if (i.overlapsWith(component)) {
+				flag = true;
+			} 
 		}
-		
-		//sorting list and adding new flight
-		if (overlapFlag == false) {
+		//case for no overlap
+		if (!flag) {
 			//case for if list is empty of if new departure after last current arrival time
-			if ( tripComponents.size() == 0 || newDeparture.after(tripComponents.get(tripComponents.size() - 1).getEnd()) ) {
+			if ( tripComponents.size() == 0 || tripComponents.get(tripComponents.size() - 1).isBefore(component)) {
 				tripComponents.add(component);
 			} else {
 				for (int i = 0; i < tripComponents.size(); i ++) {
 					//checks if new arrival is before current flights departure and puts new flight in front of current flight if 
 					// 	    thats the case
-					if (newArrival.before(tripComponents.get(i).getStart())) {
+					if (component.isBefore(tripComponents.get(i))) {
 						tripComponents.add(i, component);
 						break;
 					}
 				}
 			}
-		}
-	}
-	/*
 	
-	/**
-	 * finds the total time a person will spend in between flights
-	 * @return layover
-	 /
-	long getTotalLayover() {
-		long layover = 0L;
-		if (tripComponents.size() > 1) {
-			for (int counter = 0; counter < tripComponents.size() - 1; counter ++) {
-				//adds the difference between arrival and next departure for every element in list 
-				TripComponent nextFlight = tripComponents.get(counter + 1);
-				TripComponent currentFlight = tripComponents.get(counter);
-				layover += ((nextFlight.getStart().getTime() 
-						- currentFlight.getEnd().getTime()) / 60000);
-			}	
 		}
-		return layover;
+				
 	}
-	*/
-
+	
 	/**
 	 * gives the list of flights 
 	 * @return flights
@@ -97,6 +73,20 @@ public class Itinerary {
 	 */
 	String getName() {
 		return name;
+	}
+	
+	/**
+	 * organizes itinerary into a readable string with name of itinerary and ordered trips
+	 */
+	public String toString() {
+		// learned how to add new line to a string from: https://stackoverflow.com/questions/7833689/how-can-i-print-a-string-adding-newlines-in-java
+		String itinerary = getName() + "\n";
+		for (int counter = 0; counter < tripComponents.size(); counter ++) {
+			itinerary += counter + "\t" + tripComponents.get(counter).getStart() + "\t" +
+					tripComponents.get(counter).getEnd() + "\n";
+		}
+		
+		return itinerary;
 	}
 
 }

@@ -1,5 +1,7 @@
 package oosequence;
 
+import java.util.Date;
+
 /**
  * Stores flight info such as airport names and returns duration of flight and airport names
  * @author Shahbaz
@@ -8,8 +10,40 @@ package oosequence;
 public class Flight extends TripComponent {
 	
 	//initializing encapsulated instance variables
-	private String departureAirport;
-	private String arrivalAirport;
+	private String departureAirport = "";
+	private String arrivalAirport = "";
+		
+	/**
+	 * copy constructor
+	 * @param toCopy Flight instance to be copied
+	 */
+	Flight (Flight toCopy) {
+		super(toCopy);
+		departureAirport = toCopy.getDepartureAirport();
+		arrivalAirport = toCopy.getArrivalAirport();
+	}
+	
+	/**
+	 * default constructor
+	 * @param departureTime start time of flight
+	 * @param arrivalTime end time of flight
+	 * @param departureAirportName departure airport name
+	 * @param arrivalAirportName arrival airport name
+	 */
+	Flight (Date departureTime, Date arrivalTime, String departureAirportName, String arrivalAirportName) {
+		super(departureTime, arrivalTime);
+		//sets name of each airport if valid
+		if (departureAirportName != null) {
+			setDepartureAirport(departureAirportName);
+		} else {
+			setDepartureAirport("");
+		}
+		if (arrivalAirportName != null) {
+			setArrivalAirport(arrivalAirportName);
+		} else {
+			setArrivalAirport("");
+		}
+	}
 	
 	/**
 	 * returns the name of the airport one is departing from
@@ -23,10 +57,10 @@ public class Flight extends TripComponent {
 	 * sets the name of airport to depart from and makes sure its valid
 	 * @param departureAirport airport to depart from
 	 */
-	void setDepartureAirport(String departureAirport) {
+	void setDepartureAirport(String airportName) {
 		//checks string is not empty/null and makes sure characters are alphabetic and string is of size 3
-		if (departureAirport != null && !departureAirport.isEmpty()) {
-			char[] charList = departureAirport.toCharArray();
+		if (airportName != null && !airportName.isEmpty()) {
+			char[] charList = airportName.toCharArray();
 			boolean alphabetic = true;
 			
 			for (char i : charList) {
@@ -34,13 +68,13 @@ public class Flight extends TripComponent {
 					alphabetic = false;
 				}
 			}
-			if (departureAirport.length() == 3 && alphabetic) {
-				this.departureAirport = departureAirport;
+			if (airportName.length() == 3 && alphabetic) {
+				departureAirport = airportName;
 			} else {
-				this.departureAirport = "";
+				departureAirport = "";
 			}	
 		} else {
-			this.departureAirport = "";
+			departureAirport = "";
 		}
 		
 	}
@@ -57,10 +91,10 @@ public class Flight extends TripComponent {
 	 * sets the name of an arrival airport and makes sure its valid
 	 * @param arrivalAirport airport name
 	 */
-	void setArrivalAirport(String arrivalAirport) {
+	void setArrivalAirport(String airportName) {
 		//checks string is not empty/null and makes sure characters are alphabetic and string is of size 3
-		if (arrivalAirport != null && !arrivalAirport.isEmpty()) {
-			char[] charList = arrivalAirport.toCharArray();
+		if (airportName != null && !airportName.isEmpty()) {
+			char[] charList = airportName.toCharArray();
 			boolean alphabetic = true;
 			
 			for (char i : charList) {
@@ -68,8 +102,8 @@ public class Flight extends TripComponent {
 					alphabetic = false;
 				}
 			}
-			if (arrivalAirport.length() == 3 && alphabetic) {
-				this.arrivalAirport = arrivalAirport;
+			if (airportName.length() == 3 && alphabetic) {
+				this.arrivalAirport = airportName;
 			} else {
 				this.arrivalAirport = "";
 			}	
@@ -79,12 +113,17 @@ public class Flight extends TripComponent {
 	}
 	
 	/**
-	 * gets the length of flight in minutes
-	 * @return minutes
+	 * method to get the name of airport and time of departure as string
 	 */
-	String getDuration() {
-		float duration = lengthInSeconds() / 60.0f;
-		return String.format("%.0f minutes", duration);
+	String getStart() {
+		return getDepartureAirport() + " " + super.getStart();
+	}
+	
+	/**
+	 * method to get name of airport and time of arrival as string
+	 */
+	String getEnd() {
+		return getArrivalAirport() + " " + super.getEnd();
 	}
 	
 	
