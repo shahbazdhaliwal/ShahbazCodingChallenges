@@ -18,15 +18,24 @@ public class Flight {
 	 * @param departureDate departure date
 	 * @param arrivalDate arrival date
 	 */
-	Flight (Date departureDate, Date arrivalDate) {
-		if ((departureDate != null && arrivalDate != null) && 
-				departureDate.before(arrivalDate)) {
-			setDeparture(departureDate);
-			setArrival(arrivalDate);
-		} else if (departureDate != null && arrivalDate == null) {
-			setDeparture(departureDate);
-		} else if (arrivalDate != null && departureDate == null) {
-			setArrival(arrivalDate);
+	Flight (Date startDate, Date endDate) {
+		if (startDate != null && endDate == null) {
+			setDeparture(startDate);
+			
+		} else if (endDate != null && startDate == null) {
+			setArrival(endDate);
+			
+		} else if (startDate == null && endDate == null) {
+			setDeparture(startDate);
+			setArrival(endDate);
+			
+		} else if (startDate.before(endDate)) {
+			setDeparture(startDate);
+			setArrival(endDate);	
+			
+		} else if (startDate.equals(endDate) || startDate.after(endDate)) {
+			//setDeparture(startDate);
+			
 		}
 	}
 	
@@ -59,18 +68,24 @@ public class Flight {
 	 * @return departure time
 	 */
 	Date getDeparture() {
-		return departure;
+		Date departureCopy = null;
+		if (departure != null) {
+			departureCopy = (Date) departure.clone();
+		}
+		return departureCopy;
 	}
 	
 	/**
 	 * sets the departure of the flight granted the time of departure is valid
-	 * @param departure departure
+	 * @param departureDate departure
 	 */
-	void setDeparture(Date departure) {
-		if (this.arrival != null && departure.before(this.arrival)) {
-			this.departure = departure;
-		} else if (this.arrival == null) {
-			this.departure = departure;
+	void setDeparture(Date departureDate) {
+		if (departureDate != null) {
+			if (arrival != null && departureDate.before(arrival)) {
+				departure = (Date) departureDate.clone();
+			} else if (arrival == null) {
+				departure = (Date) departureDate.clone();
+			}
 		}
 	}
 	
@@ -79,18 +94,24 @@ public class Flight {
 	 * @return arrival time
 	 */
 	Date getArrival() {
-		return arrival;
+		Date arrivalCopy = null;
+		if (arrival != null) {
+			arrivalCopy = (Date) arrival.clone();
+		}
+		return arrivalCopy;
 	}
 
 	/**
 	 * sets the arrival time of a flight given its a valid time
-	 * @param arrival arrival time
+	 * @param arrivalDate arrival time
 	 */
-	void setArrival(Date arrival) {
-		if (this.departure != null && arrival.after(this.departure)) {
-			this.arrival = arrival;
-		} else if (this.departure == null) {
-			this.arrival = arrival;
+	void setArrival(Date arrivalDate) {
+		if (arrivalDate != null) {
+			if (departure != null && arrivalDate.after(departure)) {
+				arrival = (Date) arrivalDate.clone();
+			} else if (departure == null) {
+				arrival = (Date) arrivalDate.clone();
+			}	
 		}
 	}
 	

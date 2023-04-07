@@ -49,13 +49,13 @@ public class Itinerary {
 		if (overlapFlag == false) {
 			//case for if list is empty of if new departure after last current arrival time
 			if ( flights.size() == 0 || newDeparture.after(flights.get(flights.size() - 1).getArrival()) ) {
-				flights.add(flightToAdd);
+				flights.add(new Flight(flightToAdd));
 			} else {
 				for (int i = 0; i < flights.size(); i ++) {
 					//checks if new arrival is before current flights departure and puts new flight in front of current flight if 
 					// 	    thats the case
 					if (newArrival.before(flights.get(i).getDeparture())) {
-						flights.add(i, flightToAdd);
+						flights.add(i, new Flight(flightToAdd));
 						break;
 					}
 				}
@@ -85,7 +85,7 @@ public class Itinerary {
 	 * gives the list of flights 
 	 * @return flights
 	 */
-	ArrayList<Flight> getFlights() {
+	ArrayList<Flight> getFlightList() {
 		return flights;
 	}
 	
