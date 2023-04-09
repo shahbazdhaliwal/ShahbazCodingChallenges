@@ -109,7 +109,7 @@ public class GradeCalculatorControler {
      * @param quizzes instance of Grade class where quizzes were initialized
      */
     void setError(Grade quizzes) {
-    	quizErrorLabel.setText("Error in one or more quiz text fields. Error caused by: "+quizzes.quizErrorValue);
+    	quizErrorLabel.setText("Error in one or more quiz text fields. Error caused by: "+ quizzes.quizErrorValue);
     }
        
     /**
@@ -126,7 +126,7 @@ public class GradeCalculatorControler {
     		Grade optionQuizzes = new Grade();
     		quizOptionList = optionQuizzes.resetList(quizOptionList);
     		quizOptionList = optionQuizzes.fromTextFieldsToArray
-    				(quizOptionList, quizGradeTextFields, 10.0).toArray(quizOptionList);
+    				(quizOptionList, quizGradeTextFields, 10).toArray(quizOptionList);
     		Grade findTopFive = new Grade();
     		quizOptionList = findTopFive.findTopFive(quizOptionList);
     		optionalGradeLabel.setText(String.format("%.2f", optionQuizzes.findListAverage(quizOptionList, 5)) + "%" );
@@ -139,7 +139,7 @@ public class GradeCalculatorControler {
     		Grade requiredQuizzes = new Grade();
     		quizGradeList = requiredQuizzes.resetList(quizGradeList);
     		quizGradeList = requiredQuizzes.fromTextFieldsToArray
-    				(quizGradeList, quizGradeTextFields, 10.0).toArray(quizGradeList);
+    				(quizGradeList, quizGradeTextFields, 10).toArray(quizGradeList);
     		requiredGradeLabel.setText(String.format("%.2f", requiredQuizzes.findListAverage(quizGradeList, 15.0)) + "%" );
     		if (requiredQuizzes.error == true) {
     			setError(requiredQuizzes);
@@ -220,9 +220,10 @@ public class GradeCalculatorControler {
      * and optional coding challenges completed and a 2 choice boxes to indicate average quiz grade. From user input data, the user's
      * course grade is calculated. 
      * @param event the button "Calculate Grade" must be clicked on when in the grade calculator GUI for this method to work
+     * @throws InvalidGradeException 
      */
     @FXML
-    void calculateGrade(ActionEvent event) {
+    void calculateGrade(ActionEvent event) throws InvalidGradeException {
     	
     	projectGradeErrorLabel.setText("");
     	
@@ -238,18 +239,21 @@ public class GradeCalculatorControler {
     	String projectValueEntered = projectgradeTextfield.getText();
     	
     	Grade projectCalc;
-    	double projectGradeNoWeight;
-
+    	
     	//using grade class to validate user input in text field
     	if (!projectValueEntered.isEmpty()) {
-    		projectCalc = new Grade();
-    		projectGradeNoWeight = projectCalc.setValue(projectValueEntered, 100.0);
-    		if (projectCalc.error == true) {
-    			projectGradeErrorLabel.setText("Don't include the following character in the project grade: " + projectCalc.errorValue);
+    		try {
+    			projectCalc = new Grade(projectValueEntered, 100, projectWeight);
+    			if (projectCalc.error == true) {
+        			projectGradeErrorLabel.setText("Don't include the following character in the project grade: " + projectCalc.errorValue);
+    			}
+    		} catch (InvalidGradeException e) {
+    			projectCalc = new Grade(0.0, 100, projectWeight);
+    			projectGradeErrorLabel.setText("Invalid Value: " + projectValueEntered + " entered. Enter a number from 0 to 100.");
     		}
+    		
     	} else {
-    		projectCalc = new Grade();
-    		projectGradeNoWeight = projectCalc.setValue("0.0", 100.0);
+    		projectCalc = new Grade(0.0, 100, projectWeight);
     		projectGradeErrorLabel.setText("Project Grade Text Field is Empty");
     	}
 
@@ -264,20 +268,11 @@ public class GradeCalculatorControler {
 		Grade ccCalc = new Grade();
 		double ccGrade = ccCalc.doCalculation(ccPassed, ccWeight);
 		
-		double projectGrade = projectCalc.doCalculation(projectGradeNoWeight, projectWeight);
+		double projectGrade = projectCalc.value * projectCalc.weightOfComponent;
 		
 		// updating course grade
 		courseGrade = courseGrade + projectGrade + quizMass + ccGrade; 
  		
-		/* console prints used while debugging
-    	System.out.println("Project Grade Entered " + projectGrade);
-    	System.out.println("Quiz Grade Entered: "+ quizGrade);
-    	System.out.println("Optional Coding Challenges passed: "+ optionCCchoicebox.getValue());
-		System.out.println("Required Coding Challenges Passed: " + requiredCCchoicebox.getValue());	
-    	System.out.println("Your Current Course Grade is: " + courseGrade);
-        System.out.println(averageQuizGrade);
-    	
-        */
   		//printing calculated grade 
     	courseGradeLabel.setText(String.format("Your overall course grade is: %.2f", courseGrade) + "%");
     }

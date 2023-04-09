@@ -9,36 +9,52 @@ import javafx.scene.control.TextField;
 
 public class Grade {
 	
-	
+	double value;
+	double weightOfComponent;
 	
 	// contains the first character encountered that is not valid
 	String errorValue = "";
 	//turns true when error encountered during validation
 	boolean error = false;
 	//contains all invalid characters found in quiz grades
-	String quizErrorValue;
+	String quizErrorValue = "";
 	
 	/**
-	 * Applies the weight to a given grade
-	 * @param grade grade 
-	 * @param weight weight 
-	 * @return
+	 * default constructor
 	 */
-	double doCalculation(double grade, double weight) {
-		return grade * weight;
+	Grade () {
+		
 	}
+	
+	/**
+	 * validates whether a double value is greater than 0 and smaller than or equal to max value. Initializes weight as well
+	 * @param valueAsDouble
+	 * @param maxValue
+	 * @param weight
+	 */
+	Grade (double valueAsDouble, int maxValue, double weight)  {
+		weightOfComponent = weight;
+		if (valueAsDouble > maxValue) {
+			value = 0;
+		} else {
+			value = valueAsDouble;
+		}
+	}
+	
 	
 	/**
 	 * Checks if a string can be converted into a double ranging from 0 to max value
 	 * @param valueAsString string to convert
 	 * @param maxValue maximum value the double can have
+	 * @param weight weight of grade
 	 * @return string value as double
+	 * @throws InvalidGradeException throws if string cannot be converted to valid double
 	 */
-	double setValue(String valueAsString, double maxValue) {
-		double value = 0.0;
+	Grade(String valueAsString, int maxValue, double weight) throws InvalidGradeException{
 		//initializing some variables
     	boolean validValue = true;
     	int decimalCount = 0;
+    	
     	
     	// making sure string value can be converted into a double
     	for (char c : valueAsString.toCharArray()) {
@@ -48,6 +64,7 @@ public class Grade {
     			error = true;
     			errorValue += c;
     			value = 0;
+    			throw new InvalidGradeException("Invalid Value: " + valueAsString + " entered. Enter a number from 0 to " + maxValue);
     		// makes sure too many decimals aren't allowed through
     		} else if (c == '.') {
     			decimalCount += 1;
@@ -55,7 +72,8 @@ public class Grade {
     				validValue = false;
     				error = true;
     				errorValue += c;
-    				value = 0;    				
+    				value = 0; 
+    				throw new InvalidGradeException("Invalid Value: " + valueAsString + " entered. Enter a number from 0 to " + maxValue);
     			}
     		
     		}
@@ -69,10 +87,31 @@ public class Grade {
     		error = true;
     		errorValue += value;
     		value = 0;
+    		throw new InvalidGradeException("Invalid Value: " + valueAsString + " entered. Enter a number from 0 to " + maxValue);
     	}
-    	return value;
+    	
+    	weightOfComponent = weight;
+    	
     }
 	
+	/**
+	 * returns value
+	 * @return
+	 */
+	double getWeightedPercentageGrade() {
+		return value;
+	}
+	
+	/**
+	 * Applies the weight to a given grade
+	 * @param grade grade 
+	 * @param weight weight 
+	 * @return
+	 */
+	double doCalculation(double grade, double weight) {
+		return grade * weight;
+	}
+
 	/**
 	 * finds the average number in a given list
 	 * @param list list 
@@ -95,7 +134,7 @@ public class Grade {
 	 * @param maxValue max value a double can have
 	 * @return String doubles converted to Double doubles
 	 */
-	ArrayList<Double> fromTextFieldsToArray (Double[] list, ArrayList<TextField>textFields, double maxValue) {
+	ArrayList<Double> fromTextFieldsToArray (Double[] list, ArrayList<TextField>textFields, int maxValue) {
 		ArrayList<Double> listArray = new ArrayList<Double>(Arrays.asList(list));
 		String rawTextFieldEntry;
 		
@@ -103,17 +142,32 @@ public class Grade {
 		for (TextField textField : textFields) {
 		    
 			if (!textField.getText().isEmpty()) {
+				
 				rawTextFieldEntry = textField.getText();
-        		//adds double to averageQuizGrade after verifying string can be converted to a double
-        		listArray.add(setValue(rawTextFieldEntry, maxValue));
-        		} else {
+				try {
+					Grade gradeToAdd = new Grade(rawTextFieldEntry, maxValue, 0.0);
+					listArray.add(gradeToAdd.value);
+					if (gradeToAdd.error == true) {
+						error = true;
+						quizErrorValue += rawTextFieldEntry + ",";
+					}
+				} catch (InvalidGradeException e) {
+					// TODO Auto-generated catch block
+					Grade gradeToAdd = new Grade(0.0, maxValue, 0.0);
+					listArray.add(gradeToAdd.value);
+					error = true;
+					quizErrorValue += rawTextFieldEntry + ",";
+				} 
+				} else {
         			error = true;		
         			listArray.add(0.0);
 				}
 			
     	}
 		//adds all error causing characters to errorValueList
-		quizErrorValue = String.join(",", errorValue.split(""));
+		if (quizErrorValue.endsWith(",")) {
+			quizErrorValue = quizErrorValue.substring(0, quizErrorValue.length() -1);
+		}
         return listArray;
 	}
 	
